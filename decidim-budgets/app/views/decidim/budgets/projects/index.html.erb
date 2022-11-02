@@ -3,7 +3,9 @@
 <% end %>
 
 <% content_for :aside do %>
-<h1 class="h1 decorator"><%= t("decidim.components.budgets.name") %></h1>
+  <h1 class="h1 decorator"><%= t("decidim.components.budgets.name") %></h1>
+  <%= render partial: "filters_small_view" %>
+  <%= render partial: "filters" %>
 
 <% end %>
 
@@ -55,16 +57,13 @@
       </h2>
     </div>
 
-    <div class="row">
-      <div class="columns mediumlarge-4 large-3">
-        <%= render partial: "filters_small_view" %>
-        <div class="card card--secondary show-for-mediumlarge">
-          <%= render partial: "filters" %>
-        </div>
+    <div class="collection-sort-controls row small-up-1 medium-up-3 card-grid">
+      <div class="column">
+        <%= order_selector available_orders, i18n_scope: "decidim.budgets.projects.orders" %>
       </div>
-      <div id="projects" class="columns mediumlarge-8 large-9" aria-live="polite">
-        <%= render partial: "projects" %>
-      </div>
+    </div>
+    <div id="projects" aria-live="polite">
+      <%= render partial: "projects" %>
     </div>
   </div>
 
