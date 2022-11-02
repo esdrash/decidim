@@ -31,7 +31,6 @@ import "./input_tags"
 import "./input_hashtags"
 import "./input_mentions"
 import "./input_multiple_mentions"
-// import "./input_character_counter" --deprecated
 import "./input_autojump"
 import "./history"
 import "./callout"
@@ -45,16 +44,15 @@ import "./form_attachments"
 import "./form_remote"
 // import "./conferences" -- deprecated
 import "./tooltip_keep_on_hover"
-import "./diff_mode_dropdown"
+// import "./diff_mode_dropdown" -- deprecated
 import "./delayed"
 import "./vizzs"
 import "./responsive_horizontal_tabs"
 import "./security/selfxss_warning"
 import "./session_timeouter"
-import "./floating_help"
 import "./confirm"
 import "./results_listing"
-import "./represent_user_group"
+// import "./represent_user_group" -- deprecated
 import "./impersonation"
 // import "./start_conversation_dialog" -- deprecated
 import "./direct_uploads/redesigned_upload_field"
@@ -194,6 +192,9 @@ const initializer = () => {
         closingSelector: `[data-drawer-close="${drawer}"]`
       })
   );
+
+  // Initialize available remote modals (ajax-fetched contents)
+  document.querySelectorAll("[data-dialog-remote-url]").forEach((elem) => new RemoteModal(elem))
 
   markAsReadNotifications()
 
