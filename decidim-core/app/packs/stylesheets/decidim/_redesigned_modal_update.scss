@@ -1,6 +1,6 @@
 .upload-modal{
   &__dropzone{
-    @apply bg-background px-5 py-6 rounded max-h-[50vh] overflow-y-scroll;
+    @apply bg-background px-5 py-6 rounded max-h-[50vh] overflow-y-auto;
 
     &[hidden] + &:last-child{
       @apply py-14;
@@ -109,6 +109,8 @@
   }
 
   &__files{
+    @apply mt-1;
+
     &-container{
       @apply space-y-10 [&_label]:block [&_label]:mb-4;
     }

@@ -78,6 +78,7 @@ import backToListLink from "./back_to_list"
 import markAsReadNotifications from "./notifications"
 import RemoteModal from "./redesigned_ajax_modals"
 import addFloatingHelp from "./redesigned_floating_help"
+import { StreamActions } from "@hotwired/turbo"
 
 // bad practice: window namespace should avoid be populated as much as possible
 // rails-translations could be referrenced through a single Decidim.I18n object
@@ -202,14 +203,46 @@ const initializer = () => {
 
   // Initialize the floating help blocks for the participatory processes
   document.querySelectorAll("[data-floating-help]").forEach((elem) => addFloatingHelp(elem))
+
+  document.querySelectorAll("[data-drawer]").forEach(
+    ({ dataset: { drawer } }) =>
+    new Dialogs(`[data-drawer="${drawer}"]`, {
+      closingSelector: `[data-drawer-close="${drawer}"]`
+    }).open()
+  )
+
 }
 
 if ("Turbo" in window) {
-  document.addEventListener("turbo:frame-render", () => initializer());
+  document.addEventListener("turbo:frame-render", (frame) => {
+    initializer()
+
+    // This ensures the aside heading tag is transformed to h2 or h1 if the drawer is shown or hidden
+    const element = document.querySelector("aside [data-heading-tag]")
+    if (element) {
+      const tagName = frame.target.querySelector("[data-drawer]") ? "H2" : "H1"
+
+      const newItem = document.createElement(tagName);
+      newItem.className = element.className;
+      newItem.dataset.headingTag = element.dataset.headingTag;
+      newItem.innerHTML = element.innerHTML;
+      element.parentNode.replaceChild(newItem, element);
+    }
+  });
   document.addEventListener("turbo:load", () => initializer());
 } else {
   // If no jQuery is used the Tribute feature used in comments to autocomplete
   // mentions stops working
   // document.addEventListener("DOMContentLoaded", () => {
   $(() => initializer());
+}
+
+StreamActions.open_drawer = function() {
+  const frameId = this.getAttribute("frame_id");
+  const drawerItem = document.getElementById(frameId);
+  const filteredPath = drawerItem.dataset.filteredPath;
+
+  if (filteredPath) {
+    drawerItem.querySelector("a[data-drawer-close]").setAttribute("href", filteredPath);
+  }
 }

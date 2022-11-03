@@ -2,6 +2,11 @@ import { Uploader } from "src/decidim/direct_uploads/redesigned_uploader";
 import icon from "src/decidim/redesigned_icon";
 import { truncateFilename } from "src/decidim/direct_uploads/upload_utility";
 
+const STATUS = {
+  VALIDATED: "validated",
+  ERROR: "error"
+}
+
 // This class handles logic inside upload modal, but since modal is not inside the form
 // logic here moves "upload items" / hidden inputs to form.
 export default class UploadModal {
@@ -109,10 +114,22 @@ export default class UploadModal {
   updateDropZone() {
     // NOTE: since the FileList HTML attribute of input[type="file"] cannot be set (read-only),
     // we cannot check this.input.files.length when some item is removed
-    const inputHasFiles = this.uploadItems.children.length !== 0
-
+    const { children: files } = this.uploadItems
+    const inputHasFiles = files.length > 0
     this.uploadItems.hidden = !inputHasFiles;
-    this.saveButton.disabled = !inputHasFiles;
+
+    // Disabled save button when no children has been validated or any of them has data-state="error"
+    const errorFiles = Array.from(files).filter(({ dataset: { state } }) => state === STATUS.ERROR);
+    this.saveButton.disabled = !inputHasFiles || errorFiles.length > 0;
+
+    // Only allow to continue the upload when the multiple option is true (default: false)
+    const continueUpload = !files.length || this.options.multiple
+    this.input.disabled = !continueUpload
+    if (continueUpload) {
+      this.emptyItems.querySelector("label").removeAttribute("disabled");
+    } else {
+      this.emptyItems.querySelector("label").setAttribute("disabled", true);
+    }
   }
 
   createUploadItem(file, errors, opts = {}) {
@@ -144,12 +161,12 @@ export default class UploadModal {
       </div>
     `
 
-    let state = "validated"
+    let state = STATUS.VALIDATED
     let content = okTemplate
     let template = "ok"
 
     if (errors.length) {
-      state = "error"
+      state = STATUS.ERROR
       content = errorTemplate
       template = "error"
     }
