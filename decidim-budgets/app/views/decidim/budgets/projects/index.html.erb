@@ -2,6 +2,10 @@
   <%= javascript_pack_tag "decidim_budgets" %>
 <% end %>
 
+<% content_for :css_content do %>
+  <%= stylesheet_pack_tag "decidim_budgets", media: "all" %>
+<% end %>
+
 <% content_for :aside do %>
   <h1 class="h1 decorator"><%= t("decidim.components.budgets.name") %></h1>
   <%= render partial: "filters_small_view" %>
@@ -57,9 +61,16 @@
       </h2>
     </div>
 
-    <div class="collection-sort-controls row small-up-1 medium-up-3 card-grid">
-      <div class="column">
-        <%= order_selector available_orders, i18n_scope: "decidim.budgets.projects.orders" %>
+    <div class="text-right mb-8">
+      <div class="inline-flex items-center">
+        <label for="filter-1" class="text-sm text-secondary px-2 py-1 cursor-pointer">
+          <input type="radio" name="filter" id="filter-1" class="appearance-none peer" checked>
+          <span class="border-b-2 border-transparent peer-checked:border-secondary peer-checked:font-semibold hover:border-secondary transition">Aleatori</span>
+        </label>
+        <label for="filter-2" class="text-sm text-secondary px-2 py-1 cursor-pointer">
+          <input type="radio" name="filter" id="filter-2" class="appearance-none peer">
+          <span class="border-b-2 border-transparent peer-checked:border-secondary peer-checked:font-semibold hover:border-secondary transition">Coste</span>
+        </label>
       </div>
     </div>
     <div id="projects" aria-live="polite">
