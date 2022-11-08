@@ -7,15 +7,16 @@ import "core-js/stable";
 import "regenerator-runtime/runtime";
 import "jquery"
 import "quill"
-import Rails from "@rails/ujs"
 import "@hotwired/turbo-rails"
 
 // external deps that require initialization
+import Rails from "@rails/ujs"
 import svg4everybody from "svg4everybody"
 import morphdom from "morphdom"
 import Accordions from "a11y-accordion-component";
 import Dropdowns from "a11y-dropdown-component";
 import Dialogs from "a11y-dialog-component";
+import { StreamActions } from "@hotwired/turbo"
 
 // vendor customizated scripts (bad practice: these ones should be removed eventually)
 import "./vendor/foundation-datepicker"
@@ -78,7 +79,6 @@ import backToListLink from "./back_to_list"
 import markAsReadNotifications from "./notifications"
 import RemoteModal from "./redesigned_ajax_modals"
 import addFloatingHelp from "./redesigned_floating_help"
-import { StreamActions } from "@hotwired/turbo"
 
 // bad practice: window namespace should avoid be populated as much as possible
 // rails-translations could be referrenced through a single Decidim.I18n object
@@ -164,6 +164,10 @@ const initializer = () => {
 
   backToListLink(document.querySelectorAll(".js-back-to-list"));
 
+  markAsReadNotifications()
+
+  scrollToLastChild()
+
   Accordions.init();
   Dropdowns.init();
   document.querySelectorAll("[data-dialog]").forEach((elem) => {
@@ -194,23 +198,8 @@ const initializer = () => {
       })
   );
 
-  // Initialize available remote modals (ajax-fetched contents)
-  document.querySelectorAll("[data-dialog-remote-url]").forEach((elem) => new RemoteModal(elem))
-
-  markAsReadNotifications()
-
-  scrollToLastChild()
-
   // Initialize the floating help blocks for the participatory processes
   document.querySelectorAll("[data-floating-help]").forEach((elem) => addFloatingHelp(elem))
-
-  document.querySelectorAll("[data-drawer]").forEach(
-    ({ dataset: { drawer } }) =>
-    new Dialogs(`[data-drawer="${drawer}"]`, {
-      closingSelector: `[data-drawer-close="${drawer}"]`
-    }).open()
-  )
-
 }
 
 if ("Turbo" in window) {
@@ -220,7 +209,9 @@ if ("Turbo" in window) {
     // This ensures the aside heading tag is transformed to h2 or h1 if the drawer is shown or hidden
     const element = document.querySelector("aside [data-heading-tag]")
     if (element) {
-      const tagName = frame.target.querySelector("[data-drawer]") ? "H2" : "H1"
+      const tagName = frame.target.querySelector("[data-drawer]")
+        ? "H2"
+        : "H1"
 
       const newItem = document.createElement(tagName);
       newItem.className = element.className;
