@@ -17,6 +17,7 @@ import Accordions from "a11y-accordion-component";
 import Dropdowns from "a11y-dropdown-component";
 import Dialogs from "a11y-dialog-component";
 import { StreamActions } from "@hotwired/turbo"
+import { Turbo } from "@hotwired/turbo-rails"
 
 // vendor customizated scripts (bad practice: these ones should be removed eventually)
 import "./vendor/foundation-datepicker"
@@ -194,7 +195,8 @@ const initializer = () => {
     ({ dataset: { drawer } }) =>
       new Dialogs(`[data-drawer="${drawer}"]`, {
         openingSelector: `[data-drawer-open="${drawer}"]`,
-        closingSelector: `[data-drawer-close="${drawer}"]`
+        closingSelector: `[data-drawer-close="${drawer}"]`,
+        onClose: () => { Turbo.navigator.history.replace({ href: drawer }) }
       })
   );
 
@@ -209,9 +211,10 @@ if ("Turbo" in window) {
     // This ensures the aside heading tag is transformed to h2 or h1 if the drawer is shown or hidden
     const element = document.querySelector("aside [data-heading-tag]")
     if (element) {
-      const tagName = frame.target.querySelector("[data-drawer]")
-        ? "H2"
-        : "H1"
+      let tagName = "H1";
+      if (frame.target.querySelector("[data-drawer]")) {
+        tagName = "H2";
+      }
 
       const newItem = document.createElement(tagName);
       newItem.className = element.className;
@@ -228,6 +231,7 @@ if ("Turbo" in window) {
   $(() => initializer());
 }
 
+// eslint-disable-next-line camelcase
 StreamActions.open_drawer = function() {
   const frameId = this.getAttribute("frame_id");
   const drawerItem = document.getElementById(frameId);
@@ -235,5 +239,6 @@ StreamActions.open_drawer = function() {
 
   if (filteredPath) {
     drawerItem.querySelector("a[data-drawer-close]").setAttribute("href", filteredPath);
+    drawerItem.querySelector("div[data-drawer]").setAttribute("data-drawer", filteredPath);
   }
 }
