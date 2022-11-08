@@ -27,3 +27,6 @@ edit_link(
   <%= render partial: "project", locals: { result: result } %>
   <%= turbo_stream_action_tag :open_drawer, frame_id: :project_frame %>
 <% end %>
+
+<%# REDESIGN_PENDING: this content must go inside the drawer, now the displayed result is kinda odd %>
+<%= render partial: "project", locals: { result: result } %>

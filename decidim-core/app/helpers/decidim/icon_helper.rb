@@ -18,12 +18,11 @@ module Decidim
       "Decidim::Budgets::Order" => "check-double-line",
       "Decidim::Assembly" => "government-line",
       "Decidim::ParticipatoryProcess" => "treasure-map-line",
+      "Decidim::Category" => "price-tag-3-line",
+      "Decidim::Scope" => "scan-line",
       "Decidim::Conference" => "question-mark", # REDESIGN_PENDING: icon unknown
       "Decidim::Consultation" => "question-mark", # REDESIGN_PENDING: icon unknown
       "Decidim::Votings::Voting" => "check-double-fill",
-      "Decidim::Category" => "price-tag-3-line",
-      "Decidim::Scope" => "scan-line",
-      "other" => "price-tag-3-line",
       "upcoming" => "calendar-2-line",
       "past" => "calendar-check-line",
       "in_person" => "community-line",
@@ -32,6 +31,7 @@ module Decidim
       "official" => "star-line",
       "participants" => "open-arm-line",
       "user_groups" => "team-line",
+      "other" => "question-line",
     }.freeze
 
     # Public: Returns an icon given an instance of a Component. It defaults to
